@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- En-tête : fichier XML encodé en UTF-8. -->
+<!-- Balise racine de tout fichier de données Odoo. -->
+<odoo>
+    <!-- ================= Vue LISTE des salles ================= -->
+    <!-- Enregistrement d'une vue (modèle ir.ui.view), identifiant unique dans le module. -->
+    <record id="biblio_room_view_list" model="ir.ui.view">
+        <!-- Nom technique de la vue. -->
+        <field name="name">biblio.room.list</field>
+        <!-- Modèle affiché par cette vue. -->
+        <field name="model">biblio.room</field>
+        <!-- Architecture (contenu) de la vue, en XML. -->
+        <field name="arch" type="xml">
+            <!-- Vue de type liste (tableau). -->
+            <list>
+                <!-- Colonne : nom de la salle. -->
+                <field name="name"/>
+                <!-- Colonne : nombre de places. -->
+                <field name="seats"/>
+                <!-- Colonne : prix par jour. -->
+                <field name="daily_price"/>
+            <!-- Fin de la liste. -->
+            </list>
+        <!-- Fin de l'architecture. -->
+        </field>
+    <!-- Fin de la vue. -->
+    </record>
+
+    <!-- ================= Vue FORMULAIRE des salles ================= -->
+    <!-- Enregistrement de la vue formulaire des salles. -->
+    <record id="biblio_room_view_form" model="ir.ui.view">
+        <!-- Nom technique de la vue. -->
+        <field name="name">biblio.room.form</field>
+        <!-- Modèle affiché. -->
+        <field name="model">biblio.room</field>
+        <!-- Contenu de la vue. -->
+        <field name="arch" type="xml">
+            <!-- Vue de type formulaire. -->
+            <form>
+                <!-- La « feuille » blanche du formulaire. -->
+                <sheet>
+                    <!-- Zone des boutons intelligents, en haut à droite de la feuille. -->
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Bouton : type="object" appelle la méthode Python action_view_bookings ; style compteur ; icône calendrier. -->
+                        <button name="action_view_bookings" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <!-- Le chiffre affiché dans le bouton (widget statinfo = chiffre + libellé). -->
+                            <field name="booking_count" widget="statinfo" string="Réservations"/>
+                        <!-- Fin du bouton. -->
+                        </button>
+                    <!-- Fin de la zone des boutons. -->
+                    </div>
+                    <!-- Zone du titre. -->
+                    <div class="oe_title">
+                        <!-- Le nom de la salle en grand titre. -->
+                        <h1><field name="name"/></h1>
+                    <!-- Fin de la zone du titre. -->
+                    </div>
+                    <!-- Groupe de champs (libellé à gauche, valeur à droite). -->
+                    <group>
+                        <!-- Nombre de places. -->
+                        <field name="seats"/>
+                        <!-- Prix par jour. -->
+                        <field name="daily_price"/>
+                    <!-- Fin du groupe. -->
+                    </group>
+                <!-- Fin de la feuille. -->
+                </sheet>
+            <!-- Fin du formulaire. -->
+            </form>
+        <!-- Fin de l'architecture. -->
+        </field>
+    <!-- Fin de la vue. -->
+    </record>
+
+    <!-- ================= Vue LISTE des réservations ================= -->
+    <!-- Enregistrement de la vue liste des réservations. -->
+    <record id="biblio_room_booking_view_list" model="ir.ui.view">
+        <!-- Nom technique de la vue. -->
+        <field name="name">biblio.room.booking.list</field>
+        <!-- Modèle affiché. -->
+        <field name="model">biblio.room.booking</field>
+        <!-- Contenu de la vue. -->
+        <field name="arch" type="xml">
+            <!-- Vue liste. -->
+            <list>
+                <!-- Colonne : salle. -->
+                <field name="room_id"/>
+                <!-- Colonne : qui réserve. -->
+                <field name="customer"/>
+                <!-- Colonne : date de début. -->
+                <field name="start_date"/>
+                <!-- Colonne : date de fin. -->
+                <field name="end_date"/>
+                <!-- Colonne : durée en jours (calculée). -->
+                <field name="duration"/>
+                <!-- Colonne : prix total ; sum= affiche la somme en bas de la liste (possible car stocké). -->
+                <field name="total_price" sum="Total"/>
+            <!-- Fin de la liste. -->
+            </list>
+        <!-- Fin de l'architecture. -->
+        </field>
+    <!-- Fin de la vue. -->
+    </record>
+
+    <!-- ================= Vue FORMULAIRE des réservations ================= -->
+    <!-- Enregistrement de la vue formulaire des réservations. -->
+    <record id="biblio_room_booking_view_form" model="ir.ui.view">
+        <!-- Nom technique de la vue. -->
+        <field name="name">biblio.room.booking.form</field>
+        <!-- Modèle affiché. -->
+        <field name="model">biblio.room.booking</field>
+        <!-- Contenu de la vue. -->
+        <field name="arch" type="xml">
+            <!-- Vue formulaire. -->
+            <form>
+                <!-- La feuille du formulaire. -->
+                <sheet>
+                    <!-- Grand groupe qui contient deux colonnes. -->
+                    <group>
+                        <!-- Colonne de gauche. -->
+                        <group>
+                            <!-- Salle (choisir une salle déclenche l'onchange de la caution). -->
+                            <field name="room_id"/>
+                            <!-- Qui réserve. -->
+                            <field name="customer"/>
+                            <!-- Caution (proposée automatiquement, modifiable). -->
+                            <field name="deposit"/>
+                        <!-- Fin de la colonne de gauche. -->
+                        </group>
+                        <!-- Colonne de droite. -->
+                        <group>
+                            <!-- Date de début. -->
+                            <field name="start_date"/>
+                            <!-- Date de fin. -->
+                            <field name="end_date"/>
+                            <!-- Prix par jour (related : lecture seule, vient de la salle). -->
+                            <field name="daily_price"/>
+                            <!-- Durée en jours (calculée, lecture seule). -->
+                            <field name="duration"/>
+                            <!-- Prix total (calculé et stocké, lecture seule). -->
+                            <field name="total_price"/>
+                        <!-- Fin de la colonne de droite. -->
+                        </group>
+                    <!-- Fin du grand groupe. -->
+                    </group>
+                <!-- Fin de la feuille. -->
+                </sheet>
+            <!-- Fin du formulaire. -->
+            </form>
+        <!-- Fin de l'architecture. -->
+        </field>
+    <!-- Fin de la vue. -->
+    </record>
+
+    <!-- ================= Actions ================= -->
+    <!-- Action de fenêtre qui ouvre les salles. -->
+    <record id="biblio_room_action" model="ir.actions.act_window">
+        <!-- Titre de l'action. -->
+        <field name="name">Salles</field>
+        <!-- Modèle ouvert. -->
+        <field name="res_model">biblio.room</field>
+        <!-- Vues disponibles : liste puis formulaire. -->
+        <field name="view_mode">list,form</field>
+    <!-- Fin de l'action. -->
+    </record>
+
+    <!-- Action de fenêtre qui ouvre les réservations. -->
+    <record id="biblio_room_booking_action" model="ir.actions.act_window">
+        <!-- Titre de l'action. -->
+        <field name="name">Réservations</field>
+        <!-- Modèle ouvert. -->
+        <field name="res_model">biblio.room.booking</field>
+        <!-- Vues disponibles : liste puis formulaire. -->
+        <field name="view_mode">list,form</field>
+    <!-- Fin de l'action. -->
+    </record>
+
+    <!-- ================= Menus ================= -->
+    <!-- Menu principal (sans parent) : apparaît comme une application. -->
+    <menuitem id="biblio_room_menu_root" name="Salles de travail"/>
+    <!-- Sous-menu « Réservations » : ouvre l'action des réservations, en 1er (sequence 10). -->
+    <menuitem id="biblio_room_booking_menu" name="Réservations" parent="biblio_room_menu_root" action="biblio_room_booking_action" sequence="10"/>
+    <!-- Sous-menu « Salles » : ouvre l'action des salles, en 2e (sequence 20). -->
+    <menuitem id="biblio_room_menu" name="Salles" parent="biblio_room_menu_root" action="biblio_room_action" sequence="20"/>
+<!-- Fin de la balise racine. -->
+</odoo>
